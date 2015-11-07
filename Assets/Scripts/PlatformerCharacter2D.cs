@@ -105,10 +105,14 @@ public class PlatformerCharacter2D : MovingObject
         CheckIfDead();
 
         m_isImmune = true;
-        StartCoroutine(LoseImmunity(m_immuneTime));
         AddKnockback(collisionNormal);
         m_Rigidbody2D.velocity = Vector2.zero;
-        StartCoroutine(StopKnockback(m_knockbackTime));
+
+		if (gameObject.active) 
+		{
+			StartCoroutine (StopKnockback (m_knockbackTime));
+			StartCoroutine (LoseImmunity (m_immuneTime));
+		}
         m_Anim.SetFloat("Speed", 0);
 
         return true;
