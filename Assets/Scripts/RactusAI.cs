@@ -63,6 +63,26 @@ public class RactusAI : MovingObject
         }
     }
 
+    protected virtual void CheckIfDead()
+    {
+        if (m_health <= 0)
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    void OnCollisionStay2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            Vector3 collisionNormal = other.contacts[0].normal;
+            if (!m_player.dealDamage(m_damage, collisionNormal))
+            {
+                AddKnockback(collisionNormal * -1);
+            }
+        }
+    }
+
     public override bool dealDamage(int dmg, Vector3 collisionNormal)
     {
         m_health -= dmg;
