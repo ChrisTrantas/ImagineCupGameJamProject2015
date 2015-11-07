@@ -11,6 +11,7 @@ public class RactusAI : MovingObject
     public Rigidbody2D needleProjectile;
     private PlatformerCharacter2D m_player;
     private Rigidbody2D m_playerRigidBody2D;
+    private int m_damage = 1;
     private Transform sightline;
     private Vector2 direction;
 
