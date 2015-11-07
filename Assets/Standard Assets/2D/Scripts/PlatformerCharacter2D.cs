@@ -27,6 +27,8 @@ namespace UnityStandardAssets._2D
         public float m_immuneTime = 2;
         public float m_knockbackTime = 0.1f;
         public Vector2 m_knockbackForce = new Vector2(500, 500);
+        public float speed = 400f;
+        public float friction = 2f;
 
         private void Awake()
         {
@@ -88,9 +90,20 @@ namespace UnityStandardAssets._2D
                 // The Speed animator parameter is set to the absolute value of the horizontal input.
                 m_Anim.SetFloat("Speed", Mathf.Abs(move));
 
+                m_Rigidbody2D.AddForce(m_Rigidbody2D.velocity * friction * -1);
+
                 // Move the character
                 //Debug.Log("this is runing everything");
-                m_Rigidbody2D.velocity = new Vector2(move*m_MaxSpeed, m_Rigidbody2D.velocity.y);
+                if (move * m_Rigidbody2D.velocity.x < m_MaxSpeed)
+                {
+                    m_Rigidbody2D.AddForce(Vector2.right * move * speed);
+                }
+
+                if (Math.Abs(m_Rigidbody2D.velocity.x) > m_MaxSpeed)
+                {
+                    m_Rigidbody2D.velocity = new Vector2(Mathf.Sign(m_Rigidbody2D.velocity.x) * m_MaxSpeed, m_Rigidbody2D.velocity.y);
+                }
+                //m_Rigidbody2D.velocity = new Vector2(move*m_MaxSpeed, m_Rigidbody2D.velocity.y);
 
                 // If the input is moving the player right and the player is facing left...
                 if (move > 0 && !m_FacingRight)
@@ -158,6 +171,11 @@ namespace UnityStandardAssets._2D
             yield return new WaitForSeconds(waitTime);
             Debug.Log("Im mortal!");
             m_isImmune = false;
+        }
+
+        public bool IsImmune()
+        {
+            return m_isImmune;
         }
     }
 }
