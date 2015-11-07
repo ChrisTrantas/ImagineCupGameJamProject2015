@@ -43,9 +43,10 @@ public class RactusAI : MovingObject
     {
     }
 
-    public override void dealDamage(int dmg, Vector3 collisionNormal)
+    public override bool dealDamage(int dmg, Vector3 collisionNormal)
     {
         m_health -= dmg;
         CheckIfDead();
+        return true;
     }
 }
