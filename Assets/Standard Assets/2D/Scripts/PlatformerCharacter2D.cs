@@ -145,15 +145,15 @@ namespace UnityStandardAssets._2D
             transform.localScale = theScale;
         }
 
-        public void dealDamage(int damage, Vector3 collisionNormal)
+        public void dealDamage(int dmg, Vector3 collisionNormal)
         {
             if (m_shielding || m_isImmune)
             {
                 return;
             }
 
-            m_health -= damage;
-            Debug.Log("Ouch, I took " + damage + " damage");
+            m_health -= dmg;
+            Debug.Log("Ouch, I took " + dmg + " damage");
             m_isImmune = true;
             StartCoroutine(LoseImmunity(m_immuneTime));
             m_Rigidbody2D.AddForce(new Vector2(-1 * collisionNormal.x * m_knockbackForce.x, m_knockbackForce.y));

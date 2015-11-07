@@ -17,6 +17,7 @@ public class LizardAI : MonoBehaviour
     private bool m_canCharge = true;
     private bool m_queuedDirectionChange = false;
     public int damage = 1;
+    public int health = 1;
     public int sightRadius = 10;
     public float fieldOfViewAngle = 1;
     public float m_chargeCooldown = .5f;
@@ -104,5 +105,10 @@ public class LizardAI : MonoBehaviour
     {
         yield return new WaitForSeconds(waittTime);
         m_canCharge = true;
+    }
+
+    public void dealDamage(int dmg, Vector3 collisionNormal)
+    {
+        health -= dmg;
     }
 }
