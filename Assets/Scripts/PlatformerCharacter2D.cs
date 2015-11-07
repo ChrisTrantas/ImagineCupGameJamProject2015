@@ -9,15 +9,12 @@ public class PlatformerCharacter2D : MovingObject
     [SerializeField] private float m_JumpForce = 400f;                  // Amount of force added when the player jumps.
     [Range(0, 1)]
     [SerializeField] private float m_CrouchSpeed = .36f;  // Amount of maxSpeed applied to crouching movement. 1 = 100%
-    [SerializeField] private bool m_AirControl = false;                 // Whether or not a player can steer while jumping;
     [SerializeField] private LayerMask m_WhatIsGround;                  // A mask determining what is ground to the character
     [SerializeField] private float m_immuneTime = 2;
-    [SerializeField] private float speed = 400f;
-    [SerializeField] private float friction = 2f;
+    
 
     private Transform m_GroundCheck;    // A position marking where to check if the player is grounded.
     const float k_GroundedRadius = .1f; // Radius of the overlap circle to determine if grounded
-    private bool m_Grounded;            // Whether or not the player is grounded.
     private Transform m_CeilingCheck;   // A position marking where to check for ceilings
     const float k_CeilingRadius = .01f; // Radius of the overlap circle to determine if the player can stand up
     private Animator m_Anim;            // Reference to the player's animator component.
@@ -55,21 +52,8 @@ public class PlatformerCharacter2D : MovingObject
     }
 
 
-    public void Move(float move, bool crouch, bool jump)
+    public override void Move(float move, bool jump)
     {
-        // If crouching, check to see if the character can stand up
-        if (!crouch && m_Anim.GetBool("Crouch"))
-        {
-            // If the character has a ceiling preventing them from standing up, keep them crouching
-            if (Physics2D.OverlapCircle(m_CeilingCheck.position, k_CeilingRadius, m_WhatIsGround))
-            {
-                crouch = true;
-            }
-        }
-
-        // Set whether or not the character is crouching in the animator
-        m_Anim.SetBool("Crouch", crouch);
-
         if (m_shielding)
         {
             m_Anim.SetFloat("Speed", 0);
@@ -79,39 +63,10 @@ public class PlatformerCharacter2D : MovingObject
         //only control the player if grounded or airControl is turned on
         if (!m_isKnockedback && (m_Grounded || m_AirControl))
         {
-            // Reduce the speed if crouching by the crouchSpeed multiplier
-            move = (crouch ? move * m_CrouchSpeed : move);
-
             // The Speed animator parameter is set to the absolute value of the horizontal input.
             m_Anim.SetFloat("Speed", Mathf.Abs(move));
 
-            m_Rigidbody2D.AddForce(m_Rigidbody2D.velocity * friction * -1);
-
-            // Move the character
-            //Debug.Log("this is runing everything");
-            if (move * m_Rigidbody2D.velocity.x < m_MaxSpeed)
-            {
-                m_Rigidbody2D.AddForce(Vector2.right * move * speed);
-            }
-
-            if (Math.Abs(m_Rigidbody2D.velocity.x) > m_MaxSpeed)
-            {
-                m_Rigidbody2D.velocity = new Vector2(Mathf.Sign(m_Rigidbody2D.velocity.x) * m_MaxSpeed, m_Rigidbody2D.velocity.y);
-            }
-            //m_Rigidbody2D.velocity = new Vector2(move*m_MaxSpeed, m_Rigidbody2D.velocity.y);
-
-            // If the input is moving the player right and the player is facing left...
-            if (move > 0 && !m_FacingRight)
-            {
-                // ... flip the player.
-                Flip();
-            }
-            // Otherwise if the input is moving the player left and the player is facing right...
-            else if (move < 0 && m_FacingRight)
-            {
-                // ... flip the player.
-                Flip();
-            }
+            base.Move(move, jump);
         }
         // If the player should jump...
         if (m_Grounded && jump && m_Anim.GetBool("Ground"))
@@ -131,11 +86,17 @@ public class PlatformerCharacter2D : MovingObject
 
     
 
-    public override void dealDamage(int dmg, Vector3 collisionNormal)
+    public override bool dealDamage(int dmg, Vector3 collisionNormal)
     {
-        if (m_shielding || m_isImmune)
+        if (m_shielding)
         {
-            return;
+            m_Rigidbody2D.velocity = Vector2.zero;
+            return false;
+        }
+
+        if(m_isImmune)
+        {
+            return true;
         }
 
         m_health -= dmg;
@@ -146,8 +107,11 @@ public class PlatformerCharacter2D : MovingObject
         m_isImmune = true;
         StartCoroutine(LoseImmunity(m_immuneTime));
         AddKnockback(collisionNormal);
+        m_Rigidbody2D.velocity = Vector2.zero;
         StartCoroutine(StopKnockback(m_knockbackTime));
         m_Anim.SetFloat("Speed", 0);
+
+        return true;
     }
 
     public void changeShieldState(bool shieldState)
