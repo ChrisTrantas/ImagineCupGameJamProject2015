@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityStandardAssets.CrossPlatformInput;
+//using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets._2D;
 
-public class LizardAI : MonoBehaviour 
+public class LizardAI : MovingObject 
 {
-    [SerializeField] private float m_MaxSpeed = 10f; 
     [SerializeField] private float m_ChargeSpeed = 20f; 
+    [SerializeField] private int m_sightRadius = 10;
+    [SerializeField] private float m_chargeCooldown = .5f;
 
-    private Rigidbody2D m_Rigidbody2D;
     private PlatformerCharacter2D m_player;
     private Rigidbody2D m_playerRigidBody2D;
     private Transform sightline;
@@ -16,20 +16,18 @@ public class LizardAI : MonoBehaviour
     private bool m_charging = false;
     private bool m_canCharge = true;
     private bool m_queuedDirectionChange = false;
-    public int m_damage = 1;
-    public int m_health = 1;
-    public int m_sightRadius = 10;
-    public float m_chargeCooldown = .5f;
+    private int m_damage = 1;
     
 
 	// Use this for initialization
-	void Awake () 
+	protected override void Awake () 
     {
-        m_Rigidbody2D = GetComponent<Rigidbody2D>();
+        base.Awake();
         m_player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlatformerCharacter2D>();
         m_playerRigidBody2D = m_player.GetComponent<Rigidbody2D>();
         direction = m_Rigidbody2D.transform.right;
         sightline = m_Rigidbody2D.transform.FindChild("Sightline").transform;
+        m_health = 1;
 	}
 	
 	// Update is called once per frame
@@ -106,17 +104,9 @@ public class LizardAI : MonoBehaviour
         m_canCharge = true;
     }
 
-    public void dealDamage(int dmg, Vector3 collisionNormal)
+    public override void dealDamage(int dmg, Vector3 collisionNormal)
     {
         m_health -= dmg;
         CheckIfDead();
-    }
-
-    void CheckIfDead()
-    {
-        if (m_health <= 0)
-        {
-            gameObject.SetActive(false);
-        }
     }
 }
