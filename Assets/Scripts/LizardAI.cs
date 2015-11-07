@@ -129,4 +129,11 @@ public class LizardAI : MovingObject
         CheckIfDead();
         return true;
     }
+
+    protected override void AddKnockback(Vector3 collisionNormal)
+    {
+        m_Rigidbody2D.velocity = Vector2.zero;
+        m_Rigidbody2D.AddForce(new Vector2(Mathf.Sign(collisionNormal.x) * -1 * m_knockbackForce.x, 0));
+        m_isKnockedback = true;
+    }
 }

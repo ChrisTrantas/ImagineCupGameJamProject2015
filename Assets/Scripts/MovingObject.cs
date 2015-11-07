@@ -80,6 +80,7 @@ public abstract class MovingObject : MonoBehaviour
 
     protected virtual void AddKnockback(Vector3 collisionNormal)
     {
+        m_Rigidbody2D.velocity = Vector2.zero;
         m_Rigidbody2D.AddForce(new Vector2(-1 * collisionNormal.x * m_knockbackForce.x, m_knockbackForce.y));
         m_isKnockedback = true;
     }
