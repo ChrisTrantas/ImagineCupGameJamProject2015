@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Collections;
 
 namespace UnityStandardAssets._2D
 {
@@ -19,6 +20,10 @@ namespace UnityStandardAssets._2D
         private Animator m_Anim;            // Reference to the player's animator component.
         private Rigidbody2D m_Rigidbody2D;
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
+        private bool m_shielding = false;
+        private bool m_isImmune = false;
+        public int m_health = 3;
+        public float m_immuneTime = 2;
 
         private void Awake()
         {
@@ -49,7 +54,7 @@ namespace UnityStandardAssets._2D
         }
 
 
-        public void Move(float move, bool crouch, bool jump, bool shield)
+        public void Move(float move, bool crouch, bool jump)
         {
             // If crouching, check to see if the character can stand up
             if (!crouch && m_Anim.GetBool("Crouch"))
@@ -64,7 +69,7 @@ namespace UnityStandardAssets._2D
             // Set whether or not the character is crouching in the animator
             m_Anim.SetBool("Crouch", crouch);
 
-            if (shield)
+            if (m_shielding)
             {
                 return;
             }
@@ -114,6 +119,31 @@ namespace UnityStandardAssets._2D
             Vector3 theScale = transform.localScale;
             theScale.x *= -1;
             transform.localScale = theScale;
+        }
+
+        public void dealDamage(int damage)
+        {
+            if (m_shielding || m_isImmune)
+            {
+                return;
+            }
+
+            m_health -= damage;
+            Debug.Log("Ouch, I took " + damage + " damage");
+            m_isImmune = true;
+            StartCoroutine(LoseImmunity(m_immuneTime));
+        }
+
+        public void changeShieldState(bool shieldState)
+        {
+            m_shielding = shieldState;
+        }
+
+        IEnumerator LoseImmunity(float waitTime)
+        {
+            yield return new WaitForSeconds(waitTime);
+            Debug.Log("Im mortal!");
+            m_isImmune = false;
         }
     }
 }
