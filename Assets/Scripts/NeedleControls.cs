@@ -18,10 +18,9 @@ public class NeedleControls : MonoBehaviour {
         if (other.gameObject.tag == "Player")
         {
             Vector3 collisionNormal = other.contacts[0].normal;
-            if (!m_player.dealDamage(m_damage, collisionNormal))
-            {
-                AddKnockback(collisionNormal * -1);
-            }
+            //if (!m_player.dealDamage(m_damage, collisionNormal))
+            //{
+            //}
         }
     }
 }
