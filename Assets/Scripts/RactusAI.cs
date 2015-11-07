@@ -4,6 +4,9 @@ using System.Collections;
 public class RactusAI : MovingObject 
 {
     public int sightRadius;
+    public float cooldownTime;
+    private float timer = 0;
+    private bool canAttack = true;
 
     public Rigidbody2D needleProjectile;
     private PlatformerCharacter2D m_player;
@@ -13,7 +16,8 @@ public class RactusAI : MovingObject
 
     void Start()
     {
-        needleProjectile = GameObject.FindGameObjectWithTag("Needle").GetComponent<Rigidbody2D>();
+        //needleProjectile = GameObject.FindGameObjectWithTag("Needle").GetComponent<Rigidbody2D>();
+
     }
     // Use this for initialization
     protected override void Awake()
@@ -28,12 +32,23 @@ public class RactusAI : MovingObject
     // Update is called once per frame
     void Update()
     {
-        
     }
     
     public void FixedUpdate()
     {
-        CheckSightline();
+        if(canAttack)
+        {
+            CheckSightline();
+        }
+        else
+        {
+            timer += (0.5f * Time.deltaTime);
+            if(timer >= cooldownTime)
+            {
+                canAttack = true;
+                timer = 0;
+            }
+        }
     }
 
     private void CheckSightline()
@@ -41,9 +56,10 @@ public class RactusAI : MovingObject
         if(Vector3.Distance(transform.position, m_player.gameObject.transform.position) <= sightRadius)
         {
             Rigidbody2D clone;
-            clone = Instantiate(needleProjectile, transform.position, transform.rotation) as Rigidbody2D;
-            clone.velocity = transform.TransformDirection(Vector3.forward * 10);
+            clone = Instantiate(needleProjectile, transform.position - transform.right * 1.25f, transform.rotation) as Rigidbody2D;
+            clone.velocity = transform.TransformDirection(-Vector3.right * 10);
             Destroy(clone.gameObject, 4.0f);
+            canAttack = false;
         }
     }
 
