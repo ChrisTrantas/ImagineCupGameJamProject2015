@@ -11,7 +11,10 @@ public class RactusAI : MovingObject
     private Transform sightline;
     private Vector2 direction;
 
-
+    void Start()
+    {
+        needleProjectile = GameObject.FindGameObjectWithTag("Needle").GetComponent<Rigidbody2D>();
+    }
     // Use this for initialization
     protected override void Awake()
     {
@@ -28,19 +31,20 @@ public class RactusAI : MovingObject
         
     }
     
+    public void FixedUpdate()
+    {
+        CheckSightline();
+    }
+
     private void CheckSightline()
     {
         if(Vector3.Distance(transform.position, m_player.gameObject.transform.position) <= sightRadius)
         {
-            Rigidbody clone;
-            clone = Instantiate(needleProjectile, transform.position, transform.rotation) as Rigidbody;
+            Rigidbody2D clone;
+            clone = Instantiate(needleProjectile, transform.position, transform.rotation) as Rigidbody2D;
             clone.velocity = transform.TransformDirection(Vector3.forward * 10);
-            
+            Destroy(clone.gameObject, 4.0f);
         }
-    }
-
-    public void FixedUpdate()
-    {
     }
 
     public override void dealDamage(int dmg, Vector3 collisionNormal)
