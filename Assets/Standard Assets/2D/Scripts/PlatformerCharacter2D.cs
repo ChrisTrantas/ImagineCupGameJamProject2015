@@ -13,7 +13,7 @@ namespace UnityStandardAssets._2D
         [SerializeField] private LayerMask m_WhatIsGround;                  // A mask determining what is ground to the character
 
         private Transform m_GroundCheck;    // A position marking where to check if the player is grounded.
-        const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
+        const float k_GroundedRadius = .1f; // Radius of the overlap circle to determine if grounded
         private bool m_Grounded;            // Whether or not the player is grounded.
         private Transform m_CeilingCheck;   // A position marking where to check for ceilings
         const float k_CeilingRadius = .01f; // Radius of the overlap circle to determine if the player can stand up
@@ -22,8 +22,11 @@ namespace UnityStandardAssets._2D
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
         private bool m_shielding = false;
         private bool m_isImmune = false;
+        private bool m_isKnockedBack = false;
         public int m_health = 3;
         public float m_immuneTime = 2;
+        public float m_knockbackTime = 0.1f;
+        public Vector2 m_knockbackForce = new Vector2(500, 500);
 
         private void Awake()
         {
@@ -51,6 +54,7 @@ namespace UnityStandardAssets._2D
 
             // Set the vertical animation
             m_Anim.SetFloat("vSpeed", m_Rigidbody2D.velocity.y);
+            //m_Rigidbody2D.AddForce(new Vector2(-1 * 1 * m_knockbackForce.x, m_knockbackForce.y));
         }
 
 
@@ -71,11 +75,12 @@ namespace UnityStandardAssets._2D
 
             if (m_shielding)
             {
+                m_Anim.SetFloat("Speed", 0);
                 return;
             }
 
             //only control the player if grounded or airControl is turned on
-            if (m_Grounded || m_AirControl)
+            if (!m_isKnockedBack && (m_Grounded || m_AirControl))
             {
                 // Reduce the speed if crouching by the crouchSpeed multiplier
                 move = (crouch ? move*m_CrouchSpeed : move);
@@ -84,6 +89,7 @@ namespace UnityStandardAssets._2D
                 m_Anim.SetFloat("Speed", Mathf.Abs(move));
 
                 // Move the character
+                //Debug.Log("this is runing everything");
                 m_Rigidbody2D.velocity = new Vector2(move*m_MaxSpeed, m_Rigidbody2D.velocity.y);
 
                 // If the input is moving the player right and the player is facing left...
@@ -107,6 +113,11 @@ namespace UnityStandardAssets._2D
                 m_Anim.SetBool("Ground", false);
                 m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
             }
+
+            if (m_isKnockedBack && m_Rigidbody2D.velocity.y < 0 && m_Grounded)
+            {
+                m_isKnockedBack = false;
+            }
         }
 
 
@@ -121,7 +132,7 @@ namespace UnityStandardAssets._2D
             transform.localScale = theScale;
         }
 
-        public void dealDamage(int damage)
+        public void dealDamage(int damage, Vector3 collisionNormal)
         {
             if (m_shielding || m_isImmune)
             {
@@ -132,6 +143,9 @@ namespace UnityStandardAssets._2D
             Debug.Log("Ouch, I took " + damage + " damage");
             m_isImmune = true;
             StartCoroutine(LoseImmunity(m_immuneTime));
+            m_Rigidbody2D.AddForce(new Vector2(-1 * collisionNormal.x * m_knockbackForce.x, m_knockbackForce.y));
+            m_isKnockedBack = true;
+            m_Anim.SetFloat("Speed", 0);
         }
 
         public void changeShieldState(bool shieldState)

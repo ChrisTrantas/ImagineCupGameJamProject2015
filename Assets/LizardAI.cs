@@ -44,7 +44,8 @@ public class LizardAI : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            m_player.dealDamage(damage);
+            Vector3 collisionNormal = other.contacts[0].normal;
+            m_player.dealDamage(damage, collisionNormal);
         }
     }
 }
