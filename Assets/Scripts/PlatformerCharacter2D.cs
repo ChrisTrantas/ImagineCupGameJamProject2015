@@ -105,8 +105,8 @@ public class PlatformerCharacter2D : MovingObject
         CheckIfDead();
 
         m_isImmune = true;
+        //m_Rigidbody2D.velocity = Vector2.zero;
         AddKnockback(collisionNormal);
-        m_Rigidbody2D.velocity = Vector2.zero;
 
 		if (gameObject.active) 
 		{
