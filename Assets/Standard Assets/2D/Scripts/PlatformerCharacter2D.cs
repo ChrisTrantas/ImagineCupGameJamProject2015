@@ -154,6 +154,9 @@ namespace UnityStandardAssets._2D
 
             m_health -= dmg;
             Debug.Log("Ouch, I took " + dmg + " damage");
+
+            CheckIfDead();
+
             m_isImmune = true;
             StartCoroutine(LoseImmunity(m_immuneTime));
             m_Rigidbody2D.AddForce(new Vector2(-1 * collisionNormal.x * m_knockbackForce.x, m_knockbackForce.y));
@@ -176,6 +179,14 @@ namespace UnityStandardAssets._2D
         public bool IsImmune()
         {
             return m_isImmune;
+        }
+
+        void CheckIfDead()
+        {
+            if (m_health <= 0)
+            {
+                gameObject.SetActive(false);
+            }
         }
     }
 }

@@ -16,10 +16,9 @@ public class LizardAI : MonoBehaviour
     private bool m_charging = false;
     private bool m_canCharge = true;
     private bool m_queuedDirectionChange = false;
-    public int damage = 1;
-    public int health = 1;
-    public int sightRadius = 10;
-    public float fieldOfViewAngle = 1;
+    public int m_damage = 1;
+    public int m_health = 1;
+    public int m_sightRadius = 10;
     public float m_chargeCooldown = .5f;
     
 
@@ -76,12 +75,12 @@ public class LizardAI : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D other)
+    void OnCollisionStay2D(Collision2D other)
     {
         if (other.gameObject.tag == "Player")
         {
             Vector3 collisionNormal = other.contacts[0].normal;
-            m_player.dealDamage(damage, collisionNormal);
+            m_player.dealDamage(m_damage, collisionNormal);
             ChangeChargeState(false);
         }
     }
@@ -109,6 +108,15 @@ public class LizardAI : MonoBehaviour
 
     public void dealDamage(int dmg, Vector3 collisionNormal)
     {
-        health -= dmg;
+        m_health -= dmg;
+        CheckIfDead();
+    }
+
+    void CheckIfDead()
+    {
+        if (m_health <= 0)
+        {
+            gameObject.SetActive(false);
+        }
     }
 }
