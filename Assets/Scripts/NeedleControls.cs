@@ -1,48 +1,66 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NeedleControls : MovingObject {
-
+public class NeedleControls : MovingObject
+{
     private PlatformerCharacter2D m_player;
     private int m_damage = 1;
-
-	// Use this for initialization
-	void Start () {
-	
-	}
+    private bool m_canKill = false;
 
     protected override void Awake()
     {
         base.Awake();
         m_player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlatformerCharacter2D>();
+        if(m_player.transform.position.x < transform.position.x)
+        {
+            direction = Vector2.right;
+        }
+        else
+        {
+            direction = Vector2.left;
+            m_FacingRight = false;
+        }
     }
 
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    void FixedUpdate()
+    {
+        Move(direction.x, false);
+    }
 
-    void OnCollisionStay2D(Collision2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player")
         {
-            Vector3 collisionNormal = other.contacts[0].normal;
-            if (m_player.IsShielding())
+            Vector3 collisionNormal = new Vector3(-direction.x, 0, 0);
+            if (!m_player.dealDamage(m_damage, collisionNormal))
             {
-                this.GetComponent<Rigidbody2D>().velocity = transform.TransformDirection(Vector3.right * 10);
+                Flip();
+                m_canKill = true;
             }
-            else if (!m_player.dealDamage(m_damage, collisionNormal))
+            else
             {
                 AddKnockback(collisionNormal * -1);
-                Destroy(this.gameObject, 0);
+                Destroy(this.gameObject);
             }
         }
     }
 
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Enemy" && m_canKill)
+        {
+            other.GetComponent<MovingObject>().dealDamage(m_damage, direction);
+            Destroy(this.gameObject);
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        m_canKill = true;
+    }
+
     public override bool dealDamage(int dmg, Vector3 collisionNormal)
     {
-        m_health -= dmg;
-        CheckIfDead();
-        return true;
+        return false;
     }
 }

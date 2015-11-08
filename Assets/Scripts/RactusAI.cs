@@ -8,28 +8,16 @@ public class RactusAI : MovingObject
     private float timer = 0;
     private bool canAttack = true;
 
-    public Rigidbody2D needleProjectile;
     private PlatformerCharacter2D m_player;
     private int m_damage = 1;
-    private Vector2 direction;
+    public GameObject needle;
 
-    void Start()
-    {
-        //needleProjectile = GameObject.FindGameObjectWithTag("Needle").GetComponent<Rigidbody2D>();
-
-    }
     // Use this for initialization
     protected override void Awake()
     {
         base.Awake();
         m_player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlatformerCharacter2D>();
         direction = m_Rigidbody2D.transform.right;
-        m_health = 1;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
     
     public void FixedUpdate()
@@ -53,19 +41,10 @@ public class RactusAI : MovingObject
     {
         if(Vector3.Distance(transform.position, m_player.gameObject.transform.position) <= sightRadius)
         {
-            Rigidbody2D clone;
-            clone = Instantiate(needleProjectile, transform.position - transform.right * 1.25f, transform.rotation) as Rigidbody2D;
-            clone.velocity = transform.TransformDirection(-Vector3.right * 10);
+            GameObject clone = (GameObject) Instantiate(needle);
+            clone.transform.position = transform.position;
             Destroy(clone.gameObject, 4.0f);
             canAttack = false;
-        }
-    }
-
-    protected virtual void CheckIfDead()
-    {
-        if (m_health <= 0)
-        {
-            gameObject.SetActive(false);
         }
     }
 
@@ -78,12 +57,6 @@ public class RactusAI : MovingObject
             {
                 AddKnockback(collisionNormal * -1);
             }
-        }
-        if(other.gameObject.tag == "Needle")
-        {
-            Vector3 collisionNormal = other.contacts[0].normal;
-            dealDamage(m_damage, collisionNormal);
-            Destroy(other.gameObject, 0);
         }
     }
 

@@ -99,7 +99,7 @@ public class LizardAI : MovingObject
                 AddKnockback(collisionNormal*-1);
                 m_stunned = true;
 
-                if (gameObject.active)
+                if (gameObject.activeSelf)
                 {
                     StartCoroutine(RemoveStun(m_stunTime));
                 }
@@ -116,7 +116,7 @@ public class LizardAI : MovingObject
             m_canCharge = false;
             m_charging = charging;
 
-            if (gameObject.active)
+            if (gameObject.activeSelf)
             {
                 StartCoroutine(ChargeOffCooldown(m_chargeCooldown));
             }
@@ -152,7 +152,7 @@ public class LizardAI : MovingObject
         m_Rigidbody2D.AddForce(new Vector2(Mathf.Sign(collisionNormal.x) * -1 * m_knockbackForce.x, 0));
         m_isKnockedback = true;
 
-        if (gameObject.active)
+        if (gameObject.activeSelf)
         {
             StartCoroutine(StopKnockback(m_knockbackTime));
         }

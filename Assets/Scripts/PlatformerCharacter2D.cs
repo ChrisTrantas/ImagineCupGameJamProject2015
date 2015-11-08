@@ -108,7 +108,7 @@ public class PlatformerCharacter2D : MovingObject
         //m_Rigidbody2D.velocity = Vector2.zero;
         AddKnockback(collisionNormal);
 
-		if (gameObject.active) 
+        if (gameObject.activeSelf) 
 		{
 			
 			StartCoroutine (LoseImmunity (m_immuneTime));
@@ -121,6 +121,14 @@ public class PlatformerCharacter2D : MovingObject
     public void changeShieldState(bool shieldState)
     {
         m_shielding = shieldState;
+        if (m_shielding)
+        {
+            GetComponent<Renderer>().material.color = Color.blue;
+        }
+        else
+        {
+            GetComponent<Renderer>().material.color = Color.white;
+        }
     }
 
     IEnumerator LoseImmunity(float waitTime)
