@@ -49,14 +49,15 @@ public class NeedleControls : MovingObject
     {
         if (other.gameObject.tag == "Enemy" && m_canKill)
         {
-            other.GetComponent<MovingObject>().dealDamage(m_damage, direction);
+            MovingObject obj = other.GetComponent<MovingObject>();
+            obj.dealDamage(m_damage, -direction);
             Destroy(this.gameObject);
         }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        m_canKill = true;
+        //m_canKill = true;
     }
 
     public override bool dealDamage(int dmg, Vector3 collisionNormal)

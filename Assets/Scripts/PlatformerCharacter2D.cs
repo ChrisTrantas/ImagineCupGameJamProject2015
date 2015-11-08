@@ -48,7 +48,6 @@ public class PlatformerCharacter2D : MovingObject
 
         // Set the vertical animation
         m_Anim.SetFloat("vSpeed", m_Rigidbody2D.velocity.y);
-        //m_Rigidbody2D.AddForce(new Vector2(-1 * 1 * m_knockbackForce.x, m_knockbackForce.y));
     }
 
 
@@ -101,7 +100,7 @@ public class PlatformerCharacter2D : MovingObject
 
         m_health -= dmg;
         Debug.Log("Ouch, I took " + dmg + " damage");
-
+        GetComponent<Renderer>().material.color = Color.red;
         CheckIfDead();
 
         m_isImmune = true;
@@ -110,7 +109,6 @@ public class PlatformerCharacter2D : MovingObject
 
         if (gameObject.activeSelf) 
 		{
-			
 			StartCoroutine (LoseImmunity (m_immuneTime));
 		}
         m_Anim.SetFloat("Speed", 0);
@@ -136,6 +134,7 @@ public class PlatformerCharacter2D : MovingObject
         yield return new WaitForSeconds(waitTime);
         Debug.Log("Im mortal!");
         m_isImmune = false;
+        GetComponent<Renderer>().material.color = Color.white;
     }
 
     public bool IsImmune()

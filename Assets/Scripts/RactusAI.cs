@@ -64,6 +64,7 @@ public class RactusAI : MovingObject
     {
         m_health -= dmg;
         CheckIfDead();
+        AddKnockback(collisionNormal);
         return true;
     }
 }
