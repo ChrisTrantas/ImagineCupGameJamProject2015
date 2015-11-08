@@ -134,4 +134,9 @@ public class PlatformerCharacter2D : MovingObject
     {
         return m_isImmune;
     }
+
+    public bool IsShielding()
+    {
+        return m_shielding;
+    }
 }

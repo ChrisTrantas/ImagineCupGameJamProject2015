@@ -82,6 +82,12 @@ public class RactusAI : MovingObject
                 AddKnockback(collisionNormal * -1);
             }
         }
+        if(other.gameObject.tag == "Needle")
+        {
+            Vector3 collisionNormal = other.contacts[0].normal;
+            dealDamage(m_damage, collisionNormal);
+            Destroy(other.gameObject, 0);
+        }
     }
 
     public override bool dealDamage(int dmg, Vector3 collisionNormal)

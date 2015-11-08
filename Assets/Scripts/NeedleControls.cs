@@ -27,11 +27,15 @@ public class NeedleControls : MovingObject {
         if (other.gameObject.tag == "Player")
         {
             Vector3 collisionNormal = other.contacts[0].normal;
-            if (!m_player.dealDamage(m_damage, collisionNormal))
+            if (m_player.IsShielding())
+            {
+                this.GetComponent<Rigidbody2D>().velocity = transform.TransformDirection(Vector3.right * 10);
+            }
+            else if (!m_player.dealDamage(m_damage, collisionNormal))
             {
                 AddKnockback(collisionNormal * -1);
+                Destroy(this.gameObject, 0);
             }
-            this.GetComponent<Rigidbody2D>().velocity = transform.TransformDirection(Vector3.right * 10);
         }
     }
 
