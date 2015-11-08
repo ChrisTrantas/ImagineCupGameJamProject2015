@@ -43,6 +43,17 @@ public class RactusAI : MovingObject
         {
             GameObject clone = (GameObject) Instantiate(needle);
             clone.transform.position = transform.position;
+            NeedleControls controls = clone.GetComponent<NeedleControls>();
+
+            if (m_player.transform.position.x > transform.position.x)
+            {
+                controls.SetDirection(Vector2.right);
+            }
+            else
+            {
+                controls.SetDirection(Vector2.left);
+            }
+
             Destroy(clone.gameObject, 4.0f);
             canAttack = false;
         }

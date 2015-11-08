@@ -11,20 +11,13 @@ public class NeedleControls : MovingObject
     {
         base.Awake();
         m_player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlatformerCharacter2D>();
-        if(m_player.transform.position.x < transform.position.x)
-        {
-            direction = Vector2.right;
-        }
-        else
-        {
-            direction = Vector2.left;
-            m_FacingRight = false;
-        }
+        Debug.Log("player " + m_player.transform.position + " Needle " + this.transform.position);
     }
 
     void FixedUpdate()
     {
         Move(direction.x, false);
+        Debug.Log("updating " +m_player.transform.position+" needle "+ transform.position);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -63,5 +56,11 @@ public class NeedleControls : MovingObject
     public override bool dealDamage(int dmg, Vector3 collisionNormal)
     {
         return false;
+    }
+
+    public void SetDirection(Vector2 pos)
+    {
+        direction = pos;
+        m_FacingRight = direction.x > 0;
     }
 }
