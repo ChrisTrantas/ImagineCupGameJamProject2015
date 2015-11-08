@@ -87,7 +87,8 @@ public class PlatformerCharacter2D : MovingObject
         if (m_health <= 0)
         {
             gameObject.SetActive(false);
-            Application.LoadLevel(0);
+            var lastLvl = Application.loadedLevel;
+            Application.LoadLevel(lastLvl);
         }
     }
 
