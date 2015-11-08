@@ -65,7 +65,7 @@ public abstract class MovingObject : MonoBehaviour
         theScale.x *= -1;
         transform.localScale = theScale;
         direction *= -1;
-        Debug.Log("flip direction " + direction);
+        //Debug.Log("flip direction " + direction);
     }
 
     public abstract bool dealDamage(int dmg, Vector3 collisionNormal);

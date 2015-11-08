@@ -10,6 +10,7 @@ public class LizardAI : MovingObject
     [SerializeField] private float m_MaxChargeSpeed = 20f;
     [SerializeField] private int m_sightRadius = 10;
     [SerializeField] private float m_chargeCooldown = .5f;
+    [SerializeField] private float m_stunTime = .5f;
 
     private PlatformerCharacter2D m_player;
     private Rigidbody2D m_playerRigidBody2D;
@@ -97,6 +98,12 @@ public class LizardAI : MovingObject
             {
                 AddKnockback(collisionNormal*-1);
                 m_stunned = true;
+
+                if (gameObject.active)
+                {
+                    StartCoroutine(RemoveStun(m_stunTime));
+                    StartCoroutine(StopKnockback(m_knockbackTime));
+                }
             }
             ChangeChargeState(false);
         }
@@ -109,18 +116,28 @@ public class LizardAI : MovingObject
         {
             m_canCharge = false;
             m_charging = charging;
-            StartCoroutine(ChargeOffCooldown(m_chargeCooldown));
+
+            if (gameObject.active)
+            {
+                StartCoroutine(ChargeOffCooldown(m_chargeCooldown));
+            }
         }
-        if (m_canCharge && charging)
+        if (charging && m_canCharge && !m_charging)
         {
             m_charging = charging;
         }
     }
 
-    IEnumerator ChargeOffCooldown(float waittTime)
+    IEnumerator ChargeOffCooldown(float waitTime)
     {
-        yield return new WaitForSeconds(waittTime);
+        yield return new WaitForSeconds(waitTime);
         m_canCharge = true;
+    }
+
+    IEnumerator RemoveStun(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        m_stunned = false;
     }
 
     public override bool dealDamage(int dmg, Vector3 collisionNormal)
