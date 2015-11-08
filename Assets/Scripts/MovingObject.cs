@@ -83,6 +83,11 @@ public abstract class MovingObject : MonoBehaviour
         m_Rigidbody2D.velocity = Vector2.zero;
         m_Rigidbody2D.AddForce(new Vector2(-1 * collisionNormal.x * m_knockbackForce.x, m_knockbackForce.y));
         m_isKnockedback = true;
+
+        if (gameObject.active)
+        {
+            StartCoroutine(StopKnockback(m_knockbackTime));
+        }
     }
 
     protected IEnumerator StopKnockback(float waitTime)

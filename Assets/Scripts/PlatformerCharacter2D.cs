@@ -110,7 +110,7 @@ public class PlatformerCharacter2D : MovingObject
 
 		if (gameObject.active) 
 		{
-			StartCoroutine (StopKnockback (m_knockbackTime));
+			
 			StartCoroutine (LoseImmunity (m_immuneTime));
 		}
         m_Anim.SetFloat("Speed", 0);
