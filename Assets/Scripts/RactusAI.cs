@@ -10,9 +10,7 @@ public class RactusAI : MovingObject
 
     public Rigidbody2D needleProjectile;
     private PlatformerCharacter2D m_player;
-    private Rigidbody2D m_playerRigidBody2D;
     private int m_damage = 1;
-    private Transform sightline;
     private Vector2 direction;
 
     void Start()
@@ -25,7 +23,6 @@ public class RactusAI : MovingObject
     {
         base.Awake();
         m_player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlatformerCharacter2D>();
-        m_playerRigidBody2D = m_player.GetComponent<Rigidbody2D>();
         direction = m_Rigidbody2D.transform.right;
         m_health = 1;
     }
