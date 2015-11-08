@@ -98,7 +98,7 @@ public class LizardAI : MovingObject
             {
                 AddKnockback(collisionNormal*-1);
                 m_stunned = true;
-
+                GetComponent<Renderer>().material.color = Color.yellow;
                 if (gameObject.activeSelf)
                 {
                     StartCoroutine(RemoveStun(m_stunTime));
@@ -137,6 +137,7 @@ public class LizardAI : MovingObject
     {
         yield return new WaitForSeconds(waitTime);
         m_stunned = false;
+        GetComponent<Renderer>().material.color = Color.white;
     }
 
     public override bool dealDamage(int dmg, Vector3 collisionNormal)
