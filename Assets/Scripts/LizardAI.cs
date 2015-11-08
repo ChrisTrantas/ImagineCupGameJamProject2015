@@ -11,6 +11,7 @@ public class LizardAI : MovingObject
     [SerializeField] private int m_sightRadius = 10;
     [SerializeField] private float m_chargeCooldown = .5f;
     [SerializeField] private float m_stunTime = .5f;
+    [SerializeField] private float m_turnCooldown = .5f;
 
     private PlatformerCharacter2D m_player;
     private Rigidbody2D m_playerRigidBody2D;
@@ -20,6 +21,7 @@ public class LizardAI : MovingObject
     private bool m_queuedDirectionChange = false;
     private int m_damage = 1;
     private bool m_stunned = false;
+    private bool m_canTurn = true;
     
 
 	// Use this for initialization
@@ -86,7 +88,12 @@ public class LizardAI : MovingObject
 
     public void changeDirections()
     {
-        Flip();
+        if (m_canTurn)
+        {
+            Flip();
+            m_canTurn = false;
+            StartCoroutine(TurnCooldown(m_turnCooldown));
+        }
     }
 
     void OnCollisionStay2D(Collision2D other)
@@ -138,6 +145,12 @@ public class LizardAI : MovingObject
         yield return new WaitForSeconds(waitTime);
         m_stunned = false;
         GetComponent<Renderer>().material.color = Color.white;
+    }
+
+    IEnumerator TurnCooldown(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        m_canTurn = true;
     }
 
     public override bool dealDamage(int dmg, Vector3 collisionNormal)
