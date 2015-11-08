@@ -83,8 +83,14 @@ public class PlatformerCharacter2D : MovingObject
         }
     }
 
-
-    
+    protected override void CheckIfDead()
+    {
+        if (m_health <= 0)
+        {
+            gameObject.SetActive(false);
+            Application.LoadLevel(0);
+        }
+    }
 
     public override bool dealDamage(int dmg, Vector3 collisionNormal)
     {
